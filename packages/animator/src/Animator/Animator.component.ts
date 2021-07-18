@@ -131,6 +131,8 @@ const Animator: FC<AnimatorProps> = props => {
     const _id = instanceId;
     const _subscribe = (id: number, node: AnimatorChildRef): void => {
       childrenNodesMap.set(id, node);
+      const { flow } = getPersistentAnimatorRef();
+      node.setActivate(flow.value === ENTERING || flow.value === ENTERED);
     };
     const _unsubscribe = (id: number): void => {
       childrenNodesMap.delete(id);
@@ -352,19 +354,19 @@ const Animator: FC<AnimatorProps> = props => {
       animator.onTransition?.(flow);
 
       switch (flow.value) {
-        case ENTERING: animator.onAnimateEntering?.(publicAnimatorRef, ...animateRefs.current); break;
+        case ENTERING: animator.onAnimateEntering?.(animatorRef, ...animateRefs.current); break;
         case ENTERED:
           if (previousFlowValue && previousFlowValue !== ENTERING) {
-            animator.onAnimateEntering?.(publicAnimatorRef, ...animateRefs.current);
+            animator.onAnimateEntering?.(animatorRef, ...animateRefs.current);
           }
-          animator.onAnimateEntered?.(publicAnimatorRef, ...animateRefs.current);
+          animator.onAnimateEntered?.(animatorRef, ...animateRefs.current);
           break;
-        case EXITING: animator.onAnimateExiting?.(publicAnimatorRef, ...animateRefs.current); break;
+        case EXITING: animator.onAnimateExiting?.(animatorRef, ...animateRefs.current); break;
         case EXITED:
           if (previousFlowValue && previousFlowValue !== EXITING) {
-            animator.onAnimateExiting?.(publicAnimatorRef, ...animateRefs.current);
+            animator.onAnimateExiting?.(animatorRef, ...animateRefs.current);
           }
-          animator.onAnimateExited?.(publicAnimatorRef, ...animateRefs.current);
+          animator.onAnimateExited?.(animatorRef, ...animateRefs.current);
           break;
       }
 
